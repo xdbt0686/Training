@@ -29,3 +29,61 @@ Your output files must be structured exactly as described - output files for all
 Note:
 Your code will only be tested on valid files in the format shown in the 4 example files in this folder - you do not need to validate any data.
 '''
+import csv
+
+def calculate_classification(average_grade):
+     if average_grade >= 70:
+          return 1
+     elif average_grade >= 60:
+          return 2.1
+     elif average_grade >= 50:
+          return 2.2
+     elif average_grade >= 40:
+          return 3
+     else:
+          return "F"
+
+def process_grade(filename):
+     try:
+          with open(filename,'r',newline='') as infile:
+               reader = csv.reader(infile)
+               student_data = list(reader)
+          
+          output_data = []
+          for student in student_data:
+               if not student:
+                    continue
+               student_id = student[0] 
+
+               if not student_id.isdigit():
+                    continue
+
+               
+               grades=[float(grade) for grade in student[1:] if grade.strip()]
+               
+               if not grades:
+                    continue
+
+               average_grade = sum(grades) / len(grades)
+
+               classification = calculate_classification(average_grade)
+
+               output_line = f"{student_id},{average_grade:.2f}_{classification}"
+               output_data.append(output_line)
+          output_filename = filename + "_out.csv"
+
+          with open(output_filename,"w",newline='') as outfile:
+               for line in output_data:
+                    outfile.write(line+'\n')
+          print(f"The file has been saved")
+          return output_filename
+     except FileNotFoundError:
+          print("wrong")
+
+def main():
+     filename = input("\n please input the file's name").strip() 
+
+     process_grade(filename)
+
+if __name__ == "__main__":
+     main()
